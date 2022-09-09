@@ -217,6 +217,16 @@ bool ClassFlowMQTT::doFlow(string zwtime)
             if (resulttimestamp.length() > 0)
                 MQTTPublish(zw, resulttimestamp, SetRetainFlag);
 
+            if ((*NUMBERS)[i]->analog_roi)
+            {
+                for (int j = 0; j < (*NUMBERS)[i]->analog_roi->ROI.size(); ++i)
+                {
+                    resultROI = (*NUMBERS)[i]->analog_roi->ROI[j]->result_float;
+                    zw = namenumber + "ROI" + j; 
+                    if (resultROI.length() > 0)  
+                        MQTTPublish(zw, resultROI, SetRetainFlag);
+                }
+            }
 
             std::string json = "";
             
