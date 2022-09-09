@@ -150,6 +150,7 @@ bool ClassFlowMQTT::doFlow(string zwtime)
     std::string resultrate = "";
     std::string resulttimestamp = "";
     std::string resultchangabs = "";
+    std::string resultROI = "";
     string zw = "";
     string namenumber = "";
 
@@ -219,10 +220,10 @@ bool ClassFlowMQTT::doFlow(string zwtime)
 
             if ((*NUMBERS)[i]->analog_roi)
             {
-                for (int j = 0; j < (*NUMBERS)[i]->analog_roi->ROI.size(); ++i)
+                for (int j = 0; j < (*NUMBERS)[i]->analog_roi->ROI.size(); ++j)
                 {
-                    resultROI = (*NUMBERS)[i]->analog_roi->ROI[j]->result_float;
-                    zw = namenumber + "ROI" + j; 
+                    resultROI = std::to_string((*NUMBERS)[i]->analog_roi->ROI[j]->result_float);
+                    zw = namenumber + "ROI" + std::to_string(j); 
                     if (resultROI.length() > 0)  
                         MQTTPublish(zw, resultROI, SetRetainFlag);
                 }
