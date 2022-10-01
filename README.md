@@ -40,6 +40,38 @@ In other cases you can contact the developer via email: <img src="https://raw.gi
 
 ------
 
+##### 11.3.1 - Intermediate Digits (2022-09-17)
+
+- **ATTENTION**: 
+  - first update the 'firmware.bin' and ensure that the new version is running
+
+  - Only afterwards update the 'html.zip'
+  
+  - Otherwise the downwards compatibility of the new counter clockwise feature is not given and you end in a reboot loop, that needs manual flashing!
+  
+
+
+- **NEW v11.3.1**: corrected corrupted asset `firmware.bin`
+- Increased precision (more than 6-7 digits)
+- Implements Counter Clockwise Analog Pointers
+- Improved post processing algorithm
+- Debugging: intensive use of testcases
+- MQTT: improved handling, extended logging, automated reconnect
+- HTML: Backup Option for Configuration
+- HTML: Improved Reboot
+- HTML: Update WebUI (Reboot, Infos, CPU Temp, RSSI)
+- This version is largely also based on the work of **[caco3](https://github.com/caco3)**,  **[adellafave](https://github.com/adellafave)**,  **[haverland](https://github.com/haverland)**,  **[stefanbode](https://github.com/stefanbode)**, **[PLCHome](https://github.com/PLCHome)**
+
+##### 11.2.0 - Intermediate Digits (2022-08-28)
+
+- Updated Tensorflow / TFlite to newest tflite (version as of 2022-07-27)
+- Updated analog neural network file (`ana-cont_11.3.0_s2.tflite` - default, `ana-class100_0120_s1_q.tflite`)
+- Updated digital neural network file (`dig-cont_0570_s3.tflite` - default, `dig-class100_0120_s2_q.tflite`)
+
+- Added automated filtering of tflite-file in the graphical configuration (thanks to @**[caco3](https://github.com/caco3)**)
+- Updated consistency algorithm & test cases
+- HTML: added favicon and system name, Improved reboot dialog  (thanks to @**[caco3](https://github.com/caco3)**)
+
 ##### 11.1.1 - Intermediate Digits (2022-08-22)
 
 - New and improved consistency check (especially with analog and digital counters mixed)
