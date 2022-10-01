@@ -18,6 +18,7 @@ protected:
 
     std::string maintopic, mainerrortopic; 
 	void SetInitialParameter(void);        
+    string RundeOutput(float _in, int _anzNachkomma);
 
 public:
     ClassFlowMQTT();
@@ -29,5 +30,6 @@ public:
     bool ReadParameter(FILE* pfile, string& aktparamgraph);
     bool doFlow(string time);
     string name(){return "ClassFlowMQTT";};
+
 };
 

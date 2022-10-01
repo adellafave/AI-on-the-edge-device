@@ -7,6 +7,9 @@
 #include "interface_mqtt.h"
 #include "ClassFlowPostProcessing.h"
 
+#include <iomanip>
+#include <sstream>
+
 #include <time.h>
 
 void ClassFlowMQTT::SetInitialParameter(void)
@@ -147,6 +150,7 @@ bool ClassFlowMQTT::doFlow(string zwtime)
     std::string result;
     std::string resulterror = "";
     std::string resultraw = "";
+    std::string resultprevalue = "";
     std::string resultrate = "";
     std::string resulttimestamp = "";
     std::string resultchangabs = "";
@@ -183,6 +187,7 @@ bool ClassFlowMQTT::doFlow(string zwtime)
         {
             result =  (*NUMBERS)[i]->ReturnValue;
             resultraw =  (*NUMBERS)[i]->ReturnRawValue;
+            resultprevalue =  (*NUMBERS)[i]->ReturnPreValue;
             resulterror = (*NUMBERS)[i]->ErrorMessageText;
             resultrate = (*NUMBERS)[i]->ReturnRateValue;
             resultchangabs = (*NUMBERS)[i]->ReturnChangeAbsolute;
@@ -214,20 +219,13 @@ bool ClassFlowMQTT::doFlow(string zwtime)
             if (resultraw.length() > 0)   
                 MQTTPublish(zw, resultraw, SetRetainFlag);
 
+            zw = namenumber + "prevalue"; 
+            if (resultprevalue.length() > 0)   
+                MQTTPublish(zw, resultprevalue, SetRetainFlag);
+
             zw = namenumber + "timestamp";
             if (resulttimestamp.length() > 0)
                 MQTTPublish(zw, resulttimestamp, SetRetainFlag);
-
-            if ((*NUMBERS)[i]->analog_roi)
-            {
-                for (int j = 0; j < (*NUMBERS)[i]->analog_roi->ROI.size(); ++j)
-                {
-                    resultROI = std::to_string((*NUMBERS)[i]->analog_roi->ROI[j]->result_float);
-                    zw = namenumber + "ROI" + std::to_string(j); 
-                    if (resultROI.length() > 0)  
-                        MQTTPublish(zw, resultROI, SetRetainFlag);
-                }
-            }
 
             std::string json = "";
             
@@ -236,12 +234,30 @@ bool ClassFlowMQTT::doFlow(string zwtime)
             else
                 json += "{\"value\":\"\"";
 
-            json += ",\"raw\":\""+resultraw;
-            json += "\",\"error\":\""+resulterror;
+            json += ",\"raw\":"+resultraw;
+            json += ",\"prevalue\":"+resultprevalue;
+            json += ",\"error\":\""+resulterror+"\"";
+
+
+            if ((*NUMBERS)[i]->analog_roi)
+            {
+                for (int j = 0; j < (*NUMBERS)[i]->analog_roi->ROI.size(); ++j)
+                {
+                    resultROI = RundeOutput((*NUMBERS)[i]->analog_roi->ROI[j]->result_float,1);
+                    zw = namenumber + "ROI" + std::to_string(j); 
+                    if (resultROI.length() > 0)  
+                    {
+                        json += ",\"ROI" + std::to_string(j) + "\":" + resultROI;
+                        MQTTPublish(zw, resultROI, SetRetainFlag);
+                    }
+                }
+            }
+
+
             if (resultrate.length() > 0)
-                json += "\",\"rate\":"+resultrate;
+                json += ",\"rate\":"+resultrate;
             else
-                json += "\",\"rate\":\"\"";
+                json += ",\"rate\":\"\"";
             json += ",\"timestamp\":\""+resulttimestamp+"\"}";
 
             zw = namenumber + "json";
@@ -267,4 +283,27 @@ bool ClassFlowMQTT::doFlow(string zwtime)
     OldValue = result;
     
     return true;
+}
+
+string ClassFlowMQTT::RundeOutput(float _in, int _anzNachkomma){
+    std::stringstream stream;
+    int _zw = _in;    
+//    printf("AnzNachkomma: %d\n", _anzNachkomma);
+
+    if (_anzNachkomma < 0) {
+        _anzNachkomma = 0;
+    }
+
+    if (_anzNachkomma > 0)
+    {
+        stream << std::fixed << std::setprecision(_anzNachkomma) << _in;
+        return stream.str();          
+    }
+    else
+    {
+        stream << _zw;
+    }
+
+
+    return stream.str();  
 }
