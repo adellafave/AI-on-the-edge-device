@@ -324,15 +324,28 @@ bool ClassFlowMQTT::doFlow(string zwtime)
                 for (int j = 0; j < (*NUMBERS)[i]->analog_roi->ROI.size(); ++j)
                 {
                     resultROI = RundeOutput((*NUMBERS)[i]->analog_roi->ROI[j]->result_float,1);
-                    zw = namenumber + "ROI" + std::to_string(j); 
+                    zw = namenumber + (*NUMBERS)[i]->analog_roi->ROI[j]->name; 
                     if (resultROI.length() > 0)  
                     {
-                        json += ",\"ROI" + std::to_string(j) + "\":" + resultROI;
+                        json += ",\"" + (*NUMBERS)[i]->analog_roi->ROI[j]->name + "\":" + resultROI;
                         MQTTPublish(zw, resultROI, SetRetainFlag);
                     }
                 }
             }
 
+            if ((*NUMBERS)[i]->digit_roi)
+            {
+                for (int j = 0; j < (*NUMBERS)[i]->digit_roi->ROI.size(); ++j)
+                {
+                    resultROI = RundeOutput((*NUMBERS)[i]->digit_roi->ROI[j]->result_float,1);
+                    zw = namenumber + (*NUMBERS)[i]->digit_roi->ROI[j]->name; 
+                    if (resultROI.length() > 0)  
+                    {
+                        json += ",\"" + (*NUMBERS)[i]->digit_roi->ROI[j]->name + "\":" + resultROI;
+                        MQTTPublish(zw, resultROI, SetRetainFlag);
+                    }
+                }
+            }
 
             if (resultrate.length() > 0)
                 json += ",\"rate\":"+resultrate;
